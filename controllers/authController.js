@@ -1,10 +1,19 @@
 const passport = require('passport');
 
-const login = passport.authenticate('local', {
-  successRedirect: '/',
-  successFlash: 'You are Logged in 👍',
+exports.login = passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: 'Failed Login! 👎',
+  successRedirect: '/',
+  successFlash: 'You are Logged in 👍',
 });
 
-module.exports = login;
+exports.logout = (req, res) => {
+  req.logout();
+  req.flash('success', 'Good By, You logged out!');
+  res.redirect('/');
+};
+
+// module.exports = {
+//   login,
+//   logout,
+// };

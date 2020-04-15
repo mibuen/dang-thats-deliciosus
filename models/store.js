@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-mongoose.set('useCreateIndex', true);
 const slug = require('slugs');
 
 const storeSchema = new mongoose.Schema({

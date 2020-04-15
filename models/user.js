@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 mongoose.set('useCreateIndex', true);
-const { Schema } = mongoose;
+// const { Schema } = mongoose;
 mongoose.Promise = global.Promise;
 
 const md5 = require('md5');
@@ -9,7 +9,7 @@ const validator = require('validator');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const passportLocalMongoose = require('passport-local-mongoose');
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
