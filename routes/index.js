@@ -11,7 +11,7 @@ router.get('/', catchErrors(storeController.getstores));
 
 router.get('/stores', catchErrors(storeController.getstores));
 
-router.get('/add', storeController.addStore);
+router.get('/add', authController.isLoggedIn, storeController.addStore);
 
 router.post(
   '/add',
@@ -34,7 +34,7 @@ router.get('/tags', catchErrors(storeController.getStoresByTags));
 router.get('/tags/:tag', catchErrors(storeController.getStoresByTags));
 
 router.get('/login', userController.loginForm);
-router.post('login', authController.login);
+router.post('/login', authController.login);
 router.get('/register', userController.registerForm);
 // 1. validate registration data before sending data to mongo, see controller.validateRegister
 // 2.- register the user(save in database)
@@ -46,5 +46,15 @@ router.post(
   authController.login
 );
 router.get('/logout', authController.logout);
+
+router.get('/account', authController.isLoggedIn, userController.account);
+router.post('/account', catchErrors(userController.updateAccount));
+router.post('/account/forgot', catchErrors(authController.forgot));
+router.get('/account/reset/:token', catchErrors(authController.reset));
+router.post(
+  '/account/reset/:token',
+  authController.confirmedPasswords,
+  catchErrors(authController.update)
+);
 
 module.exports = router;

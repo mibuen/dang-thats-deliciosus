@@ -50,9 +50,35 @@ const registerUser = async (req, res, next) => {
   next(); // pass to authController.login
 };
 
+const account = (req, res) => {
+  res.render('account', { title: 'Edit your Account' });
+};
+
+const updateAccount = async (req, res) => {
+  const updates = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      $set: updates,
+    },
+    {
+      new: true,
+      runValidators: true,
+      context: 'query',
+    }
+  );
+  req.flash('success', 'Updated Profile 👍');
+  res.redirect('back');
+};
+
 module.exports = {
   loginForm,
   registerForm,
   validateRegister,
   registerUser,
+  account,
+  updateAccount,
 };
