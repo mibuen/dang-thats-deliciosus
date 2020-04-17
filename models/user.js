@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.set('useCreateIndex', true);
+// mongoose.set('useCreateIndex', true);
 const { Schema } = mongoose;
 mongoose.Promise = global.Promise;
 

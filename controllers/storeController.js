@@ -41,6 +41,7 @@ const resize = async (req, res, next) => {
 };
 
 const createStore = async (req, res) => {
+  req.body.author = req.user._id;
   const store = await new Store(req.body).save();
   req.flash(
     'success',
@@ -53,9 +54,15 @@ const getstores = async (req, res) => {
   const stores = await Store.find();
   res.render('stores', { title: 'Stores', stores });
 };
+const confirmOwner = (store, user) => {
+  if (!store.author.equals(user._id)) {
+    throw Error('You are not the Author of the store');
+  }
+};
 
 const editStore = async (req, res) => {
   const store = await Store.findById(req.params.id);
+  confirmOwner(store, req.user);
   res.render('editStore', { title: `Edit ${store.storeName}`, store });
 };
 
@@ -74,7 +81,9 @@ const updateStore = async (req, res) => {
 };
 
 const getStoreBySlug = async (req, res, next) => {
-  const store = await Store.findOne({ slug: req.params.slug });
+  const store = await Store.findOne({ slug: req.params.slug }).populate(
+    'author'
+  );
   if (!store) return next();
   // res.json(store);
   res.render('store', { store, title: store.storeName });
@@ -90,6 +99,22 @@ const getStoresByTags = async (req, res) => {
   res.render('tags', { tags, title: 'Tags', tag, stores });
 };
 
+const searchStores = async (req, res) => {
+  const stores = await Store.find(
+    {
+      $text: {
+        $search: req.query.q,
+      },
+    },
+    {
+      score: { $meta: 'textScore' },
+    }
+  )
+    .sort({ score: { $meta: 'textScore' } })
+    .limit(5);
+  res.json(stores);
+};
+
 module.exports = {
   homePage,
   addStore,
@@ -101,4 +126,5 @@ module.exports = {
   resize,
   getStoreBySlug,
   getStoresByTags,
+  searchStores,
 };

@@ -36,7 +36,20 @@ const storeSchema = new mongoose.Schema({
     },
   },
   photo: String,
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: 'You must supply an author',
+  },
 });
+
+// Define Indexes
+storeSchema.index({
+  storeName: 'text',
+  description: 'text',
+});
+
+storeSchema.index({ location: '2dsphere' });
 
 storeSchema.pre('save', async function(next) {
   if (!this.isModified('storeName')) {
