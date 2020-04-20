@@ -1,6 +1,6 @@
 extends layout
 block content
-  pre= h.dump(store)
+  //- pre= h.dump(store)
   .single
     .single__hero
       img.single__image(src=`/uploads/${store.photo || 'store.png'}`)
@@ -10,6 +10,7 @@ block content
   .single__details.inner
     img.single__map(src=h.staticMap(store.location.coordinates))
     p.single__location #{store.location.storeAddress}
+    p= store.description
 
     if store.tags
       ul.tags
