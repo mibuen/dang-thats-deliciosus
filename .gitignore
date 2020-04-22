@@ -1,3 +1,7 @@
-node_modules
-var.env
+node_modules/
 .DS_Store
+*.log
+.idea
+haters/ 
+var.env
+var.env.now

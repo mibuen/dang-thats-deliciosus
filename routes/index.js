@@ -11,6 +11,7 @@ const { catchErrors } = require('../handlers/errorHandlers');
 router.get('/', catchErrors(storeController.getstores));
 
 router.get('/stores', catchErrors(storeController.getstores));
+router.get('/stores/page/:page', catchErrors(storeController.getstores));
 
 router.get('/add', authController.isLoggedIn, storeController.addStore);
 
@@ -59,11 +60,17 @@ router.post(
 );
 
 router.get('/map', storeController.mapPage);
+router.get(
+  '/hearts',
+  authController.isLoggedIn,
+  catchErrors(storeController.getHearts)
+);
 router.post(
   '/reviews/:id',
   authController.isLoggedIn,
   catchErrors(reviewController.addReview)
 );
+router.get('/top', catchErrors(storeController.getTopStores));
 
 // API
 router.get('/api/search', catchErrors(storeController.searchStores));

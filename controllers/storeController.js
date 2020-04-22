@@ -52,9 +52,26 @@ const createStore = async (req, res) => {
 };
 
 const getstores = async (req, res) => {
-  const stores = await Store.find();
-  res.render('stores', { title: 'Stores', stores });
+  const page = req.params.page || 1;
+  const limit = 4;
+  const skip = page * limit - limit;
+  const storesPromise = Store.find()
+    .skip(skip)
+    .limit(limit)
+    .sort({ created: 'desc' });
+  const countPromise = Store.count();
+  const [stores, count] = await Promise.all([storesPromise, countPromise]);
+  const pages = Math.ceil(count / limit);
+  if (!stores.length && skip) {
+    req.flash(
+      'info',
+      `Hey! page ${page} do not exists, here is the last page ${pages}`
+    );
+    res.redirect(`/stores/page/${pages}`);
+  }
+  res.render('stores', { title: 'Stores', stores, page, pages, count });
 };
+
 const confirmOwner = (store, user) => {
   if (!store.author.equals(user._id)) {
     throw Error('You are not the Author of the store');
@@ -148,6 +165,18 @@ const heartStore = async (req, res) => {
   res.json(user);
 };
 
+const getHearts = async (req, res) => {
+  const stores = await Store.find({
+    _id: { $in: req.user.hearts },
+  });
+  res.render('stores', { title: 'Hearted Stores', stores });
+};
+
+const getTopStores = async (req, res) => {
+  const stores = await Store.getTopStores(); // this is a function at the Store model
+  // res.json(stores);
+  res.render('topStores', { stores, title: '★ Top stores!' });
+};
 module.exports = {
   homePage,
   addStore,
@@ -163,4 +192,6 @@ module.exports = {
   mapStores,
   mapPage,
   heartStore,
+  getTopStores,
+  getHearts,
 };
